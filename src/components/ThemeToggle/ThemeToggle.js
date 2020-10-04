@@ -19,11 +19,11 @@ const Wrapper = styled(motion.div)`
 
 const StyledPalette = styled(PaletteButton)`
   position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
+  top: 0.125rem;
+  right: 0.125rem;
   padding: 0.25rem;
-  height: 1.75rem;
-  width: 1.75rem;
+  height: 2rem;
+  width: 2rem;
 `;
 
 const Circle = styled(motion.div)`

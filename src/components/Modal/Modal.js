@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
   position: absolute;
   height: 100vh;
   width: 100%;
@@ -28,17 +28,15 @@ const ModalWrapper = styled(motion.div)`
 `;
 
 const Modal = ({ children, isVisible, onOutsideClick }) => {
-  const modalEl = useRef(null);
+  const wrapperEl = useRef(null);
 
-  const handleClick = (e) =>
-    !modalEl.current.contains(e.target) && onOutsideClick();
+  const handleClick = (e) => wrapperEl.current === e.target && onOutsideClick();
 
   return (
     <AnimatePresence>
       {isVisible && (
-        <Wrapper onClick={handleClick}>
+        <Wrapper ref={wrapperEl} onTap={handleClick}>
           <ModalWrapper
-            ref={modalEl}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

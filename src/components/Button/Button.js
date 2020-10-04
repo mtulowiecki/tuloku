@@ -5,14 +5,16 @@ import { motion, useAnimation } from 'framer-motion';
 
 const Wrapper = styled(motion.button)`
   position: relative;
-  border: 0;
+  border: none;
+  outline: none !important;
   margin: 0;
   cursor: pointer;
   background-color: transparent;
   color: ${({ theme }) => theme.secondary};
 
   &:focus {
-    outline: 0;
+    outline: 0 !important;
+    box-shadow: none;
   }
 
   ${({ svg }) =>

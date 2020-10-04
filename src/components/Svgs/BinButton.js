@@ -11,7 +11,6 @@ const BinButton = ({ onTap, className, tooltipText, tooltipShortcut }) => (
     className={className}
     tooltipText={tooltipText}
     tooltipShortcut={tooltipShortcut}
-    noBackground
     svg
   >
     <path

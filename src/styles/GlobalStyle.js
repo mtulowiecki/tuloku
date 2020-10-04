@@ -31,6 +31,14 @@ export default createGlobalStyle`
         outline:0;
     }
 
+    input,
+    textarea,
+    button,
+    select,
+    a {
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+
     html {
         font-size: 16px;
     }
