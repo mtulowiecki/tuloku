@@ -54,6 +54,7 @@ export default Object.keys(themes).reduce((acc, theme) => {
     primary: `rgb(${themes[theme].primary})`,
     secondary: `rgb(${themes[theme].secondary})`,
     secondary15: `rgba(${themes[theme].secondary},0.15)`,
+    secondary60: `rgba(${themes[theme].secondary},0.6)`,
   };
   return acc;
 }, {});

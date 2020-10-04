@@ -1,10 +1,12 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import reducer from 'reducers';
+import { createStore } from 'redux-dynamic-modules';
+import { getThunkExtension } from 'redux-dynamic-modules-thunk';
+import rootModule from './rootModule';
 
-/* eslint-disable no-underscore-dangle */
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
-/* eslint-enable */
+const store = createStore(
+  {
+    extensions: [getThunkExtension()],
+  },
+  rootModule
+);
 
 export default store;

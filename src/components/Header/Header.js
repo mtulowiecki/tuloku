@@ -1,11 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { navigate } from '@reach/router';
+import { Location, navigate } from '@reach/router';
+import { connect } from 'react-redux';
 
-import LeftArrow from 'components/Svgs/LeftArrow';
-import ThemeMenu from 'components/ThemeMenu/ThemeMenu';
+import LeftArrowButton from 'components/Svgs/LeftArrowButton';
+import Chronograph from 'components/Chronograph/Chronograph';
+import ThemeToggle from 'components/ThemeToggle/ThemeToggle';
 
-const Header = styled.header`
+const StyledHeader = styled.header`
   position: absolute;
   top: 0;
   left: 0;
@@ -14,19 +17,42 @@ const Header = styled.header`
   display: grid;
   place-items: center;
   grid-template-columns: repeat(3, 1fr);
+  z-index: 900;
 `;
 
-const StyledLeftArrow = styled(LeftArrow)`
+const StyledLeftArrow = styled(LeftArrowButton)`
   justify-self: left;
+  padding: 0.25rem;
   height: 1.75rem;
   width: 1.75rem;
 `;
 
-const Navbar = () => (
-  <Header>
-    <StyledLeftArrow name="back" onClick={() => navigate('/')} />
-    <ThemeMenu />
-  </Header>
+const Header = ({
+  game: {
+    present: { gameTimer },
+  },
+}) => (
+  <Location>
+    {({ location }) => (
+      <StyledHeader>
+        {!(location.pathname === '/') && (
+          <StyledLeftArrow name="back" onTap={() => navigate('/')} />
+        )}
+        {gameTimer !== undefined && <Chronograph />}
+        <ThemeToggle />
+      </StyledHeader>
+    )}
+  </Location>
 );
 
-export default Navbar;
+Header.propTypes = {
+  game: PropTypes.shape({ present: PropTypes.object }),
+};
+
+Header.defaultProps = {
+  game: { present: {} },
+};
+
+const mapStateToProps = ({ game }) => ({ game });
+
+export default connect(mapStateToProps)(Header);

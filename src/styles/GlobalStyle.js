@@ -27,9 +27,14 @@ export default createGlobalStyle`
         max-width: 550px;
     }
 
+    button:focus {
+        outline:0;
+    }
+
     html {
         font-size: 16px;
     }
+
     @media screen and (min-width: 320px) {
         html {
             font-size: calc(16px + 6 * ((100vw - 320px) / 680));

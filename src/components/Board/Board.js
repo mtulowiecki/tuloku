@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+import { motion } from 'framer-motion';
 
 import Cell from 'components/Cell/Cell';
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
   position: relative;
   width: 100%;
 
@@ -15,7 +17,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Content = styled.div`
+const Content = styled(motion.div)`
   position: absolute;
   height: 100%;
   width: 100%;
@@ -43,30 +45,44 @@ const Line = styled.hr`
   grid-row: ${({ row }) => row};
 `;
 
-const Board = ({ board, focusedIndex, focusedNumber, setIndex, setNumber }) => {
+const Board = ({
+  board,
+  higlightCell,
+  focusedIndex,
+  focusedNumber,
+  setFocusedIndex,
+  setFocusedNumber,
+}) => {
+  const handleCellTap = (number, index) => {
+    if (index !== focusedIndex) {
+      setFocusedIndex(index);
+      if (number) setFocusedNumber(number);
+    } else {
+      setFocusedIndex(null);
+      setFocusedNumber(null);
+    }
+  };
+
   return (
     <Wrapper>
       <Content>
-        {board.map(({ index, init, predictions, user, solved }) => {
-          const number = init || user;
-          return (
-            <Cell
-              key={index}
-              number={number}
-              predictions={predictions}
-              isInit={!!init}
-              isFocusedIndex={focusedIndex === index}
-              isFocusedNumber={focusedNumber !== 0 && focusedNumber === number}
-              isWrong={solved === number}
-              onClick={() => {
-                setIndex(index);
-                if (number) {
-                  setNumber(number);
-                }
-              }}
-            />
-          );
-        })}
+        {board.map(({ index, init, user, predictions, solved }) => (
+          <Cell
+            key={index}
+            init={init}
+            user={user}
+            predictions={predictions}
+            custom={{
+              isFocusedIndex: index === focusedIndex,
+              isFocusedNumber:
+                higlightCell &&
+                focusedNumber !== 0 &&
+                focusedNumber === (init || user),
+              isInvalid: !init && user !== solved,
+            }}
+            onTap={() => handleCellTap(init || user, index)}
+          />
+        ))}
         <Line row={4} />
         <Line row={8} />
       </Content>
@@ -79,15 +95,16 @@ Board.propTypes = {
     PropTypes.shape({
       index: PropTypes.number.isRequired,
       init: PropTypes.number.isRequired,
-      predictions: PropTypes.arrayOf(PropTypes.number),
       user: PropTypes.number,
+      predictions: PropTypes.arrayOf(PropTypes.number),
       solved: PropTypes.number,
     })
   ).isRequired,
+  higlightCell: PropTypes.bool.isRequired,
   focusedIndex: PropTypes.number,
-  setIndex: PropTypes.func.isRequired,
   focusedNumber: PropTypes.number,
-  setNumber: PropTypes.func.isRequired,
+  setFocusedIndex: PropTypes.func.isRequired,
+  setFocusedNumber: PropTypes.func.isRequired,
 };
 
 Board.defaultProps = {
@@ -95,4 +112,16 @@ Board.defaultProps = {
   focusedNumber: null,
 };
 
-export default Board;
+const mapStateToProps = ({
+  root: {
+    settings: { higlightCell },
+  },
+  game: {
+    present: { board },
+  },
+}) => ({
+  board,
+  higlightCell,
+});
+
+export default connect(mapStateToProps)(Board);

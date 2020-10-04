@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components';
+import styled, { withTheme } from 'styled-components';
+import { motion, useAnimation } from 'framer-motion';
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
   position: relative;
   width: 100%;
   height: 100%;
@@ -40,30 +41,14 @@ const Wrapper = styled.div`
     top: -1px;
     bottom: 100%;
   }
+`;
 
-  ${({ isInit }) =>
-    isInit &&
-    css`
-      background: radial-gradient(
-        circle at center,
-        ${({ theme }) => theme.secondary15} 0%,
-        ${({ theme }) => theme.secondary15} 55%,
-        transparent 56%
-      );
-      font-weight: 600;
-    `};
-
-  ${({ isFocused, theme }) =>
-    isFocused &&
-    css`
-      background: radial-gradient(
-        circle at center,
-        ${theme.secondary} 0%,
-        ${theme.secondary} 55%,
-        transparent 56%
-      );
-      color: ${theme.primary};
-    `};
+const Circle = styled(motion.div)`
+  position: absolute;
+  height: 80%;
+  width: 80%;
+  border-radius: 50%;
+  z-index: -1;
 `;
 
 const Grid = styled.div`
@@ -87,42 +72,88 @@ const Prediction = styled.div`
   }
 `;
 
-const Cell = ({
-  number,
-  predictions,
-  isInit,
-  isFocusedIndex,
-  isFocusedNumber,
-  onClick,
-}) => (
-  <Wrapper
-    onClick={onClick}
-    isInit={isInit}
-    isFocused={isFocusedNumber || isFocusedIndex}
-  >
-    {number || (
-      <Grid>
-        {predictions.map((prediction) => (
-          <Prediction key={prediction} area={prediction}>
-            {prediction}
-          </Prediction>
-        ))}
-      </Grid>
-    )}
-  </Wrapper>
-);
+const Cell = ({ init, user, predictions, custom, onTap, theme }) => {
+  const wrapperControls = useAnimation();
+
+  const wrapperVariants = {
+    active: {
+      color: theme.primary,
+    },
+    normal: init
+      ? {
+          color: theme.secondary,
+          fontWeight: 600,
+        }
+      : {
+          color: theme.secondary,
+        },
+  };
+
+  const circleVariants = {
+    active: ({ isFocusedIndex }) =>
+      isFocusedIndex
+        ? {
+            backgroundColor: theme.secondary,
+            scale: 1,
+          }
+        : {
+            backgroundColor: theme.secondary60,
+            scale: 1,
+          },
+    normal: init
+      ? {
+          backgroundColor: theme.secondary15,
+          scale: 1,
+        }
+      : {
+          scale: 0,
+        },
+  };
+
+  const contentVariants = {
+    validation: ({ isInvalid }) => ({
+      x: isInvalid ? [null, -4, 4, -4, 4, 0] : null,
+    }),
+  };
+
+  useEffect(() => {
+    if (custom.isFocusedIndex || custom.isFocusedNumber)
+      wrapperControls.start('active');
+    else wrapperControls.start('normal');
+    return () => wrapperControls.stop();
+  }, [theme, custom.isFocusedIndex, custom.isFocusedNumber, wrapperControls]);
+
+  return (
+    <Wrapper onTap={onTap} animate={wrapperControls} variants={wrapperVariants}>
+      <Circle custom={custom} variants={circleVariants} />
+      <motion.div custom={custom} variants={contentVariants}>
+        {init || user || (
+          <Grid>
+            {predictions.map((prediction) => (
+              <Prediction key={prediction}>{prediction}</Prediction>
+            ))}
+          </Grid>
+        )}
+      </motion.div>
+    </Wrapper>
+  );
+};
 
 Cell.propTypes = {
-  number: PropTypes.number.isRequired,
+  init: PropTypes.number.isRequired,
+  user: PropTypes.number.isRequired,
   predictions: PropTypes.arrayOf(PropTypes.number),
-  isInit: PropTypes.bool.isRequired,
-  isFocusedIndex: PropTypes.bool.isRequired,
-  isFocusedNumber: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
+  custom: PropTypes.shape({
+    isFocusedIndex: PropTypes.bool.isRequired,
+    isFocusedNumber: PropTypes.bool.isRequired,
+    isInvalid: PropTypes.bool.isRequired,
+  }).isRequired,
+  theme: PropTypes.objectOf(PropTypes.string).isRequired,
+  onTap: PropTypes.func.isRequired,
 };
 
 Cell.defaultProps = {
   predictions: [],
 };
 
-export default Cell;
+export default withTheme(Cell);
