@@ -21,7 +21,7 @@ const Wrapper = styled.div`
 const Footer = ({ toggleInfoModal }) => {
   return (
     <Wrapper>
-      <a href="https://github.com/mtulowiecki">
+      <a href="https://github.com/tulski">
         <GitHubButton />
       </a>
       <ListButton onTap={() => navigate('/times')} />
