@@ -4,7 +4,10 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { motion } from 'framer-motion';
 import { ActionCreators as UndoActionCreators } from 'redux-undo';
-import { setCell as setCellAction } from 'actions/gameActions';
+import {
+  setNumbers as setNumbersAction,
+  setCell as setCellAction,
+} from 'actions/gameActions';
 import { saveTimeRecord as saveTimeRecordAction } from 'actions/rootActions';
 
 import RestartButton from 'components/Svgs/RestartButton';
@@ -25,21 +28,29 @@ const Wrapper = styled.div`
 `;
 
 const Toolbar = ({
-  focusedIndex,
-  setFocusedIndex,
-  setFocusedNumber,
   isPencil,
   togglePencil,
   gameControls,
   board,
-  setCell,
-  clearBoard,
   canUndo,
   canRedo,
-  handleUndo,
-  handleRedo,
+  focusedIndex,
+  focusedNumber,
+  clearBoard,
   saveTimeRecord,
+  undo,
+  redo,
+  setCell,
+  setNumbers,
 }) => {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+
+  const handleUndo = canUndo ? undo : null;
+  const handleRedo = canRedo ? redo : null;
+  const clearCell = () => setCell(focusedIndex, 0);
+
   const handleCheckClick = () => {
     if (board.every((cell) => cell.init || cell.user === cell.solved)) {
       saveTimeRecord();
@@ -48,51 +59,53 @@ const Toolbar = ({
     }
   };
 
-  const handleKeyUp = (e) => {
-    switch (e.key.toUpperCase()) {
-      case 'R':
-        clearBoard();
-        break;
-      case 'C':
-        handleCheckClick();
-        break;
-      case 'Z':
-        if (canUndo) handleUndo();
-        break;
-      case 'A':
-        if (canRedo) handleRedo();
-        break;
-      case 'P':
-        togglePencil();
-        break;
-      case 'X':
-        setCell(focusedIndex, 0);
-        break;
-      case 'ARROWUP':
-        if (focusedIndex > 8) setFocusedIndex(focusedIndex - 9);
-        break;
-      case 'ARROWDOWN':
-        if (focusedIndex < 72) setFocusedIndex(focusedIndex + 9);
-        break;
-      case 'ARROWLEFT':
-        if (![0, 9, 18, 27, 36, 45, 54, 63, 72].includes(focusedIndex))
-          setFocusedIndex(focusedIndex - 1);
-        break;
-      case 'ARROWRIGHT':
-        if (![8, 17, 26, 35, 44, 53, 62, 71, 80].includes(focusedIndex))
-          setFocusedIndex(focusedIndex + 1);
-        break;
-      case 'ESCAPE':
-        setFocusedIndex(null);
-        setFocusedNumber(null);
-        break;
-      default:
-        break;
-    }
-  };
-
   useEffect(() => {
-    document.addEventListener('keyup', handleKeyUp);
+    const handleKeyUp = (e) => {
+      const setFocusedIndex = (index) => setCell(index, focusedNumber);
+
+      switch (e.key.toUpperCase()) {
+        case 'R':
+          clearBoard();
+          break;
+        case 'C':
+          handleCheckClick();
+          break;
+        case 'Z':
+          handleUndo();
+          break;
+        case 'A':
+          handleRedo();
+          break;
+        case 'P':
+          togglePencil();
+          break;
+        case 'X':
+          clearCell();
+          break;
+        case 'ARROWUP':
+          if (focusedIndex > 8) setFocusedIndex(focusedIndex - 9);
+          break;
+        case 'ARROWDOWN':
+          if (focusedIndex < 72) setFocusedIndex(focusedIndex + 9);
+          break;
+        case 'ARROWLEFT':
+          if (![0, 9, 18, 27, 36, 45, 54, 63, 72].includes(focusedIndex))
+            setFocusedIndex(focusedIndex - 1);
+          break;
+        case 'ARROWRIGHT':
+          if (![8, 17, 26, 35, 44, 53, 62, 71, 80].includes(focusedIndex))
+            setFocusedIndex(focusedIndex + 1);
+          break;
+        case 'ESCAPE':
+          setNumbers(null, null);
+          break;
+        default:
+          break;
+      }
+    };
+    if (!isMobile) {
+      document.addEventListener('keyup', handleKeyUp);
+    }
     return () => document.removeEventListener('keyup', handleKeyUp);
   });
 
@@ -116,14 +129,10 @@ const Toolbar = ({
           tooltipShortcut="C"
         />
       </motion.div>
-      <UndoButton
-        onTap={canUndo ? handleUndo : null}
-        tooltipText="Undo"
-        tooltipShortcut="Z"
-      />
+      <UndoButton onTap={handleUndo} tooltipText="Undo" tooltipShortcut="Z" />
       <UndoButton
         mirrored
-        onTap={canRedo ? handleRedo : null}
+        onTap={handleRedo}
         tooltipText="Redo"
         tooltipShortcut="A"
       />
@@ -133,19 +142,12 @@ const Toolbar = ({
         tooltipText="Pencil"
         tooltipShortcut="P"
       />
-      <XButton
-        onTap={() => setCell(focusedIndex, 0)}
-        tooltipText="Erase"
-        tooltipShortcut="X"
-      />
+      <XButton onTap={clearCell} tooltipText="Erase" tooltipShortcut="X" />
     </Wrapper>
   );
 };
 
 Toolbar.propTypes = {
-  focusedIndex: PropTypes.number,
-  setFocusedIndex: PropTypes.func.isRequired,
-  setFocusedNumber: PropTypes.func.isRequired,
   isPencil: PropTypes.bool.isRequired,
   togglePencil: PropTypes.func.isRequired,
   gameControls: PropTypes.shape({
@@ -160,31 +162,38 @@ Toolbar.propTypes = {
       solved: PropTypes.number,
     })
   ).isRequired,
-  setCell: PropTypes.func.isRequired,
-  clearBoard: PropTypes.func.isRequired,
   canUndo: PropTypes.bool.isRequired,
   canRedo: PropTypes.bool.isRequired,
-  handleUndo: PropTypes.func.isRequired,
-  handleRedo: PropTypes.func.isRequired,
+  focusedIndex: PropTypes.number,
+  focusedNumber: PropTypes.number,
+  clearBoard: PropTypes.func.isRequired,
   saveTimeRecord: PropTypes.func.isRequired,
+  undo: PropTypes.func.isRequired,
+  redo: PropTypes.func.isRequired,
+  setCell: PropTypes.func.isRequired,
+  setNumbers: PropTypes.func.isRequired,
 };
 
 Toolbar.defaultProps = {
   focusedIndex: null,
+  focusedNumber: null,
 };
 
 const mapStateToProps = ({ game }) => ({
   board: game.present.board,
   canUndo: game.past.length > 1,
   canRedo: game.future.length > 0,
+  focusedIndex: game.present.numbers.focusedIndex,
+  focusedNumber: game.present.numbers.focusedNumber,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setCell: (index, number) => dispatch(setCellAction(index, number)),
   clearBoard: () => dispatch(UndoActionCreators.jumpToPast(1)),
-  handleUndo: () => dispatch(UndoActionCreators.undo()),
-  handleRedo: () => dispatch(UndoActionCreators.redo()),
   saveTimeRecord: () => dispatch(saveTimeRecordAction()),
+  undo: () => dispatch(UndoActionCreators.undo()),
+  redo: () => dispatch(UndoActionCreators.redo()),
+  setCell: (index, number) => dispatch(setCellAction(index, number)),
+  setNumbers: (index, number) => dispatch(setNumbersAction(index, number)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);

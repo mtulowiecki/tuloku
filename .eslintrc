@@ -9,7 +9,8 @@
   "parser": "babel-eslint",
   "globals": {
     "window": true,
-    "document": true
+    "document": true,
+    "navigator": true
   },
   "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [".js"] }]

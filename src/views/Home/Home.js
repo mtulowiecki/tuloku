@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { motion, useCycle, AnimatePresence } from 'framer-motion';
 import { navigate } from '@reach/router';
 import { connect } from 'react-redux';
@@ -12,18 +12,12 @@ import Button from 'components/Button/Button';
 import Footer from 'components/Footer/Footer';
 
 const Wrapper = styled.div`
-  height: 100%;
+  height: 100vh;
   width: 100%;
   display: grid;
   grid-template-rows: 4fr repeat(3, 2rem) 1fr auto;
   grid-gap: 1rem;
   place-items: center;
-
-  ${({ isBlured }) =>
-    isBlured &&
-    css`
-      filter: blur(4px);
-    `}
 `;
 
 const Home = ({ gameHistory, difficulty }) => {
@@ -31,7 +25,7 @@ const Home = ({ gameHistory, difficulty }) => {
   return (
     <>
       <InfoModal isVisible={infoModal} onOutsideClick={toggleInfoModal} />
-      <Wrapper isBlured={infoModal}>
+      <Wrapper>
         <SudokuLogoButton />
         <Carousele options={['easy', 'medium', 'hard', 'random']} />
         <Button name="new game" onTap={() => navigate('/game')}>

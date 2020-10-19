@@ -3,13 +3,16 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'styles/theme';
+
 import GlobalStyle from 'styles/GlobalStyle';
 import Header from 'components/Header/Header';
+import InitialModal from 'components/InitialModal/InitialModal';
 
 const MainTemplate = ({ children, currentTheme }) => (
   <ThemeProvider theme={theme[currentTheme]}>
     <GlobalStyle />
     <Header />
+    <InitialModal />
     {children}
   </ThemeProvider>
 );

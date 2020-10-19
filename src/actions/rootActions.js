@@ -3,7 +3,6 @@ export const SET_THEME = 'SET_THEME';
 export const EXIT_GAME = 'EXIT_GAME';
 export const SAVE_TIME_RECORD = 'SAVE_TIME_RECORD';
 export const DELETE_TIME_RECORD = 'DELETE_TIME_RECORD';
-export const FINISH_GAME = 'FINISH_GAME';
 export const TOGGLE_SETTING = 'TOGGLE_SETTING';
 export const RESTART = 'RESTART';
 

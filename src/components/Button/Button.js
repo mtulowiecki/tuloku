@@ -91,6 +91,10 @@ const Button = ({
   noBackground,
   secondary,
 }) => {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+
   const buttonControls = useAnimation();
   const buttonVariants = {
     normal: {
@@ -158,7 +162,7 @@ const Button = ({
       svg={svg}
       secondary={secondary}
     >
-      {tooltipText && (
+      {!isMobile && tooltipText && (
         <Tooltip
           initial="hidden"
           animate={tooltipControls}

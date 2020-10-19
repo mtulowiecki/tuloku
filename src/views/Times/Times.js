@@ -10,9 +10,9 @@ import TimeRecord from 'components/TimeRecord/TimeRecord';
 import BinButton from 'components/Svgs/BinButton';
 
 const Wrapper = styled.div`
-  height: 100%;
+  height: 100vh;
   width: 100%;
-  padding: 1rem;
+  padding: 1rem 1rem 0;
   padding-top: 35%;
   display: flex;
   flex-direction: column;
@@ -26,17 +26,22 @@ const Header = styled.h3`
 `;
 
 const List = styled(motion.ul)`
+  max-height: 100%;
   font-size: 1rem;
   width: 100%;
+  margin-top: 2rem;
   padding: 0;
+  overflow-y: scroll;
+  scroll-snap-type: y proximity;
 `;
 
 const ListItem = styled.li`
   width: 100%;
-  padding: 0.35rem 0;
+  padding: 0.35rem 0.5rem;
   display: flex;
   justify-content: space-between;
   font-weight: 300;
+  scroll-snap-align: start;
 `;
 
 const StyledBinButton = styled(BinButton)`

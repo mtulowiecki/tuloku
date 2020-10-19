@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import {
+  setNumbers as setNumbersAction,
   setCell as setCellAction,
   setPrediction as setPredictionAction,
 } from 'actions/gameActions';
@@ -40,24 +41,29 @@ const Digit = styled.span`
 `;
 
 const Remaining = styled.span`
-  font-weight: 300;
+  fon-weight: 300;
   font-size: 0.75rem;
 `;
 
 const Digits = ({
   isPencil,
   focusedIndex,
-  setFocusedNumber,
   remainingDigits,
   board,
+  setNumbers,
   setCell,
   setPrediction,
 }) => {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+
   const [digits, setDigits] = useState(
     new Array(9).fill().map((_, index) => ({ digit: index + 1, remaining: 0 }))
   );
+
   const handleClick = (input) => {
-    setFocusedNumber(input);
+    setNumbers(focusedIndex, input);
     if (!isPencil) {
       setCell(focusedIndex, input);
     } else {
@@ -78,12 +84,13 @@ const Digits = ({
     );
   }, [board, remainingDigits]);
 
-  const handleKeyUp = (e) => {
-    if (!Number.isNaN(parseInt(e.key, 10))) handleClick(parseInt(e.key, 10));
-  };
-
   useEffect(() => {
-    document.addEventListener('keyup', handleKeyUp);
+    const handleKeyUp = (e) => {
+      if (!Number.isNaN(parseInt(e.key, 10))) handleClick(parseInt(e.key, 10));
+    };
+    if (!isMobile) {
+      document.addEventListener('keyup', handleKeyUp);
+    }
     return () => document.removeEventListener('keyup', handleKeyUp);
   });
 
@@ -111,7 +118,6 @@ const Digits = ({
 Digits.propTypes = {
   isPencil: PropTypes.bool.isRequired,
   focusedIndex: PropTypes.number,
-  setFocusedNumber: PropTypes.func.isRequired,
   remainingDigits: PropTypes.bool.isRequired,
   board: PropTypes.arrayOf(
     PropTypes.shape({
@@ -122,6 +128,7 @@ Digits.propTypes = {
       solved: PropTypes.number,
     })
   ).isRequired,
+  setNumbers: PropTypes.func.isRequired,
   setCell: PropTypes.func.isRequired,
   setPrediction: PropTypes.func.isRequired,
 };
@@ -135,11 +142,19 @@ const mapStateToProps = ({
     settings: { remainingDigits },
   },
   game: {
-    present: { board },
+    present: {
+      numbers: { focusedIndex },
+      board,
+    },
   },
-}) => ({ remainingDigits, board });
+}) => ({
+  focusedIndex,
+  remainingDigits,
+  board: remainingDigits ? board : [],
+});
 
 const mapDispatchToProps = (dispatch) => ({
+  setNumbers: (index, number) => dispatch(setNumbersAction(index, number)),
   setCell: (index, number) => dispatch(setCellAction(index, number)),
   setPrediction: (index, number) =>
     dispatch(setPredictionAction(index, number)),

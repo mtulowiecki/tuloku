@@ -4,6 +4,7 @@ export const FETCH_REQUEST = 'FETCH_REQUEST';
 export const FETCH_SUCCESS = 'FETCH_SUCCESS';
 export const FETCH_FAILURE = 'FETCH_FAILURE';
 export const LOAD_GAME = 'LOAD_GAME';
+export const SET_NUMBERS = 'SET_NUMBERS';
 export const SET_CELL = 'SET_CELL';
 export const SET_PREDICTION = 'SET_PREDICTION';
 
@@ -44,6 +45,7 @@ export const fetchGame = () => (dispatch, getState) => {
         });
     })
     .catch((error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
       dispatch({
         type: FETCH_FAILURE,
@@ -62,6 +64,14 @@ export const loadGame = () => (dispatch, getState) => {
     },
   });
 };
+
+export const setNumbers = (index, number) => ({
+  type: SET_NUMBERS,
+  payload: {
+    focusedIndex: index,
+    focusedNumber: number || null,
+  },
+});
 
 export const setCell = (index, number) => ({
   type: SET_CELL,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 import { connect } from 'react-redux';
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation, useCycle } from 'framer-motion';
 import { fetchGame as fetchGameAction } from 'actions/gameActions';
 
 import FinishModal from 'components/FinishModal/FinishModal';
@@ -12,15 +12,15 @@ import Digits from 'components/Digits/Digits';
 import Toolbar from 'components/Toolbar/Toolbar';
 
 const Wrapper = styled(motion.div)`
-  height: 100%;
+  height: 100vh;
   width: 100%;
   padding-top: 4rem;
   display: grid;
   grid-template-rows: 1fr auto auto;
   place-items: center;
 
-  ${({ blur }) =>
-    blur &&
+  ${({ isBlured }) =>
+    isBlured &&
     css`
       filter: blur(4px);
     `}
@@ -29,28 +29,26 @@ const Wrapper = styled(motion.div)`
 const Game = ({ isLoading, gameTimer, errorMessage, fetchGame }) => {
   const [isBlured, setBlured] = useState(false);
   const [isFinished, setFinished] = useState(false);
-  const [isPencil, setPencil] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState(null);
-  const [focusedNumber, setFocusedNumber] = useState(null);
+  const [isPencil, togglePencil] = useCycle(false, true);
 
   const gameControls = useAnimation();
 
   useEffect(() => {
-    const toggleBlur = () => setBlured(!gameTimer.isRunning());
+    const handleBlur = () => setBlured(!gameTimer.isRunning());
     const handleFinish = () => setFinished(true);
 
     if (gameTimer !== null) {
       gameTimer.start();
-      gameTimer.addEventListener('started', toggleBlur);
-      gameTimer.addEventListener('paused', toggleBlur);
+      gameTimer.addEventListener('started', handleBlur);
+      gameTimer.addEventListener('paused', handleBlur);
       gameTimer.addEventListener('stopped', handleFinish);
     }
 
     return () => {
       if (gameTimer !== null) {
         gameTimer.pause();
-        gameTimer.removeEventListener('started', toggleBlur);
-        gameTimer.removeEventListener('paused', toggleBlur);
+        gameTimer.removeEventListener('started', handleBlur);
+        gameTimer.removeEventListener('paused', handleBlur);
         gameTimer.removeEventListener('stoped', handleFinish);
       }
     };
@@ -61,26 +59,12 @@ const Game = ({ isLoading, gameTimer, errorMessage, fetchGame }) => {
   ) : (
     <>
       <FinishModal isVisible={isFinished} />
-      <Wrapper animate={gameControls} blur={isBlured || isFinished}>
-        <Board
-          focusedIndex={focusedIndex}
-          focusedNumber={focusedNumber}
-          setFocusedIndex={setFocusedIndex}
-          setFocusedNumber={setFocusedNumber}
-        />
-
-        <Digits
-          focusedIndex={focusedIndex}
-          focusedNumber={focusedNumber}
-          isPencil={isPencil}
-          setFocusedNumber={setFocusedNumber}
-        />
+      <Wrapper animate={gameControls} isBlured={isBlured}>
+        <Board />
+        <Digits isPencil={isPencil} />
         <Toolbar
-          focusedIndex={focusedIndex}
-          setFocusedIndex={setFocusedIndex}
-          setFocusedNumber={setFocusedNumber}
           isPencil={isPencil}
-          togglePencil={() => setPencil(!isPencil)}
+          togglePencil={togglePencil}
           gameControls={gameControls}
         />
       </Wrapper>

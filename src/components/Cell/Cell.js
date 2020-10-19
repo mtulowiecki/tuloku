@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 import { motion, useAnimation } from 'framer-motion';
+import { setNumbers as setNumbersAction } from 'actions/gameActions';
 
 const Wrapper = styled(motion.div)`
   position: relative;
@@ -72,7 +74,19 @@ const Prediction = styled.div`
   }
 `;
 
-const Cell = ({ init, user, predictions, custom, onTap, theme }) => {
+const Cell = ({
+  init,
+  user,
+  predictions,
+  isFocusedIndex,
+  isFocusedNumber,
+  isInvalid,
+  setNumbers,
+  clearNumbers,
+  theme,
+}) => {
+  const handleCellClick = isFocusedIndex ? clearNumbers : setNumbers;
+
   const wrapperControls = useAnimation();
 
   const wrapperVariants = {
@@ -90,7 +104,7 @@ const Cell = ({ init, user, predictions, custom, onTap, theme }) => {
   };
 
   const circleVariants = {
-    active: ({ isFocusedIndex }) =>
+    active: () =>
       isFocusedIndex
         ? {
             backgroundColor: theme.secondary,
@@ -111,22 +125,37 @@ const Cell = ({ init, user, predictions, custom, onTap, theme }) => {
   };
 
   const contentVariants = {
-    validation: ({ isInvalid }) => ({
+    validation: () => ({
       x: isInvalid ? [null, -4, 4, -4, 4, 0] : null,
     }),
   };
 
+  const wrapperTransition = {
+    duration: 0.25,
+    ease: 'linear',
+  };
+
+  const circleTransition = {
+    duration: 0.25,
+    ease: 'linear',
+  };
+
   useEffect(() => {
-    if (custom.isFocusedIndex || custom.isFocusedNumber)
-      wrapperControls.start('active');
+    if (isFocusedIndex || isFocusedNumber) wrapperControls.start('active');
     else wrapperControls.start('normal');
+
     return () => wrapperControls.stop();
-  }, [theme, custom.isFocusedIndex, custom.isFocusedNumber, wrapperControls]);
+  }, [theme, isFocusedIndex, isFocusedNumber, wrapperControls]);
 
   return (
-    <Wrapper onTap={onTap} animate={wrapperControls} variants={wrapperVariants}>
-      <Circle custom={custom} variants={circleVariants} />
-      <motion.div custom={custom} variants={contentVariants}>
+    <Wrapper
+      onClick={handleCellClick}
+      animate={wrapperControls}
+      variants={wrapperVariants}
+      transition={wrapperTransition}
+    >
+      <Circle variants={circleVariants} transition={circleTransition} />
+      <motion.div variants={contentVariants}>
         {init || user || (
           <Grid>
             {predictions.map((prediction) => (
@@ -143,17 +172,44 @@ Cell.propTypes = {
   init: PropTypes.number.isRequired,
   user: PropTypes.number.isRequired,
   predictions: PropTypes.arrayOf(PropTypes.number),
-  custom: PropTypes.shape({
-    isFocusedIndex: PropTypes.bool.isRequired,
-    isFocusedNumber: PropTypes.bool.isRequired,
-    isInvalid: PropTypes.bool.isRequired,
-  }).isRequired,
+  isFocusedIndex: PropTypes.bool.isRequired,
+  isFocusedNumber: PropTypes.bool.isRequired,
+  isInvalid: PropTypes.bool.isRequired,
+  setNumbers: PropTypes.func.isRequired,
+  clearNumbers: PropTypes.func.isRequired,
   theme: PropTypes.objectOf(PropTypes.string).isRequired,
-  onTap: PropTypes.func.isRequired,
 };
 
 Cell.defaultProps = {
   predictions: [],
 };
 
-export default withTheme(Cell);
+const mapStateToProps = (
+  {
+    root: {
+      settings: { highlightCell },
+    },
+    game: {
+      present: {
+        numbers: { focusedIndex, focusedNumber },
+      },
+    },
+  },
+  { index, init, user, solved }
+) => {
+  const isFocusedIndex = index === focusedIndex;
+  const isFocusedNumber = highlightCell && focusedNumber === (init || user);
+  const isInvalid = !init && user !== solved;
+  return {
+    isFocusedIndex,
+    isFocusedNumber,
+    isInvalid,
+  };
+};
+
+const mapDispatchToProps = (dispatch, { index, init, user }) => ({
+  setNumbers: () => dispatch(setNumbersAction(index, init || user)),
+  clearNumbers: () => dispatch(setNumbersAction(null, null)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(Cell));

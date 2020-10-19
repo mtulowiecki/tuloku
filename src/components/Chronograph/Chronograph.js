@@ -53,6 +53,7 @@ const Chronograph = ({ gameTimer }) => {
 
   return (
     <Wrapper
+      id="dupa"
       onTap={isRunning ? gameTimer.pause : !hasStopped && gameTimer.start}
       animate={isRunning ? 'pause' : 'play'}
     >

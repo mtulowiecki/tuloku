@@ -45,42 +45,18 @@ const Line = styled.hr`
   grid-row: ${({ row }) => row};
 `;
 
-const Board = ({
-  board,
-  higlightCell,
-  focusedIndex,
-  focusedNumber,
-  setFocusedIndex,
-  setFocusedNumber,
-}) => {
-  const handleCellTap = (number, index) => {
-    if (index !== focusedIndex) {
-      setFocusedIndex(index);
-      if (number) setFocusedNumber(number);
-    } else {
-      setFocusedIndex(null);
-      setFocusedNumber(null);
-    }
-  };
-
+const Board = ({ board }) => {
   return (
     <Wrapper>
       <Content>
         {board.map(({ index, init, user, predictions, solved }) => (
           <Cell
             key={index}
+            index={index}
             init={init}
             user={user}
             predictions={predictions}
-            custom={{
-              isFocusedIndex: index === focusedIndex,
-              isFocusedNumber:
-                higlightCell &&
-                focusedNumber !== 0 &&
-                focusedNumber === (init || user),
-              isInvalid: !init && user !== solved,
-            }}
-            onTap={() => handleCellTap(init || user, index)}
+            solved={solved}
           />
         ))}
         <Line row={4} />
@@ -100,28 +76,14 @@ Board.propTypes = {
       solved: PropTypes.number,
     })
   ).isRequired,
-  higlightCell: PropTypes.bool.isRequired,
-  focusedIndex: PropTypes.number,
-  focusedNumber: PropTypes.number,
-  setFocusedIndex: PropTypes.func.isRequired,
-  setFocusedNumber: PropTypes.func.isRequired,
-};
-
-Board.defaultProps = {
-  focusedIndex: null,
-  focusedNumber: null,
 };
 
 const mapStateToProps = ({
-  root: {
-    settings: { higlightCell },
-  },
   game: {
     present: { board },
   },
 }) => ({
   board,
-  higlightCell,
 });
 
 export default connect(mapStateToProps)(Board);

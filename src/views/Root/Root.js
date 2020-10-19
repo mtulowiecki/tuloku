@@ -9,25 +9,19 @@ import GameModuleLoader from 'views/Game/GameModuleLoader';
 import Times from 'views/Times/Times';
 import Settings from 'views/Settings/Settings';
 
-const Root = () => (
-  <Provider store={store}>
-    <MainTemplate>
-      <Router
-        style={{
-          height: '100vh',
-          width: '100%',
-          display: 'grid',
-          placeItems: 'center',
-          overflow: 'hidden',
-        }}
-      >
-        <Home path="/" />
-        <GameModuleLoader path="/game" />
-        <Times path="/times" />
-        <Settings path="/settings" />
-      </Router>
-    </MainTemplate>
-  </Provider>
-);
+const Root = () => {
+  return (
+    <Provider store={store}>
+      <MainTemplate>
+        <Router>
+          <Home path="/" />
+          <GameModuleLoader path="/game" />
+          <Times path="/times" />
+          <Settings path="/settings" />
+        </Router>
+      </MainTemplate>
+    </Provider>
+  );
+};
 
 export default Root;

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Wrapper = styled(motion.div)`
@@ -12,6 +12,14 @@ const Wrapper = styled(motion.div)`
   display: grid;
   place-items: center;
   z-index: 100;
+
+  ${({ isVisible }) =>
+    isVisible &&
+    css`
+      & + div {
+        filter: blur(4px);
+      }
+    `}
 `;
 
 const ModalWrapper = styled(motion.div)`
@@ -35,7 +43,7 @@ const Modal = ({ children, isVisible, onOutsideClick }) => {
   return (
     <AnimatePresence>
       {isVisible && (
-        <Wrapper ref={wrapperEl} onTap={handleClick}>
+        <Wrapper ref={wrapperEl} isVisible={isVisible} onTap={handleClick}>
           <ModalWrapper
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

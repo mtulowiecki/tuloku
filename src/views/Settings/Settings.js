@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import styled, { withTheme, css } from 'styled-components';
+import styled, { withTheme } from 'styled-components';
 import { motion, useAnimation } from 'framer-motion';
 import {
   toggleSetting as toggleSettingAction,
@@ -12,17 +12,13 @@ import RestartModal from 'components/RestartModal/RestartModal';
 import Button from 'components/Button/Button';
 
 const Wrapper = styled.div`
+  height: 100vh;
   width: 100%;
   padding: 1rem;
+  padding-top: 35%;
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  ${({ isBlured }) =>
-    isBlured &&
-    css`
-      filter: blur(4px);
-    `}
 `;
 
 const Header = styled.h3`
@@ -50,7 +46,7 @@ const StyledButton = styled(Button)`
 `;
 
 const Times = ({
-  settings: { remainingDigits, higlightCell },
+  settings: { remainingDigits, highlightCell },
   toggleSetting,
   restart,
   theme,
@@ -72,7 +68,7 @@ const Times = ({
     );
 
     return () => circleControls.stop();
-  }, [theme, circleControls, remainingDigits, higlightCell]);
+  }, [theme, circleControls, remainingDigits, highlightCell]);
 
   return (
     <>
@@ -81,7 +77,7 @@ const Times = ({
         handleHide={() => setRestartModal(false)}
         restart={restart}
       />
-      <Wrapper isBlured={restartModal}>
+      <Wrapper>
         <Header>Settings</Header>
         <Paragraph>Show remaining digit count</Paragraph>
         <Circle
@@ -91,13 +87,13 @@ const Times = ({
         >
           {remainingDigits ? 'ON' : 'OFF'}
         </Circle>
-        <Paragraph>Higlight same digits</Paragraph>
+        <Paragraph>Highlight same digits</Paragraph>
         <Circle
-          custom={higlightCell}
+          custom={highlightCell}
           animate={circleControls}
-          onTap={() => toggleSetting('higlightCell')}
+          onTap={() => toggleSetting('highlightCell')}
         >
-          {higlightCell ? 'ON' : 'OFF'}
+          {highlightCell ? 'ON' : 'OFF'}
         </Circle>
         <StyledButton
           name="restart"

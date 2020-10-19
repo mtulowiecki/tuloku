@@ -6,10 +6,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Button from 'components/Button/Button';
 
 const Wrapper = styled.div`
-  display: grid;
-  grid-template-rows: 6rem 3rem 2rem;
-  grid-gap: 2rem;
-  place-items: center;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledSvg = styled(motion.svg)`
@@ -24,9 +26,9 @@ const Path = styled(motion.path)`
 `;
 
 const Paragraph = styled.p`
-  margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
+  margin: 3rem 0 2rem;
 `;
 
 const Loader = ({ errorMessage, onRetry }) => {
@@ -54,7 +56,6 @@ const Loader = ({ errorMessage, onRetry }) => {
                 exit={{ opacity: 0 }}
               />
             </StyledSvg>
-
             <Paragraph>{errorMessage}</Paragraph>
             <Button name="retry" onTap={onRetry} secondary>
               Retry

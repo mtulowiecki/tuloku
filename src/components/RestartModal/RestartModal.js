@@ -28,17 +28,17 @@ const RestartModal = ({ isVisible, handleHide, restart }) => (
   <Modal isVisible={isVisible} onOutsideClick={handleHide}>
     <Paragraph>Are you sure you want to restart the game?</Paragraph>
     <ButtonsWrapper>
-      <StyledButton name="cancel" secondary onTap={handleHide}>
-        Cancel
+      <StyledButton name="no" secondary onTap={handleHide}>
+        No
       </StyledButton>
       <StyledButton
-        name="restart"
+        name="yes"
         onTap={() => {
           restart();
           navigate('/');
         }}
       >
-        Restart
+        Yes
       </StyledButton>
     </ButtonsWrapper>
   </Modal>

@@ -4,7 +4,13 @@ import Modal from 'components/Modal/Modal';
 
 const RestartModal = ({ isVisible, onOutsideClick }) => (
   <Modal isVisible={isVisible} onOutsideClick={onOutsideClick}>
-    <p>Siemka</p>
+    <p>Portfolio project</p>
+    <p>
+      Progressive Web App made out of love to sudoku. Complete react game with
+      redux dynamic modules and framer-motion animations. Simple, minimalist
+      design.
+    </p>
+    <a href="https://www.tulski.com/">visit my portfolio page</a>
   </Modal>
 );
 

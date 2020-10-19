@@ -25,6 +25,7 @@ export default createGlobalStyle`
         position:relative;
         width:100%;
         max-width: 550px;
+        height:100vh;
     }
 
     button:focus {

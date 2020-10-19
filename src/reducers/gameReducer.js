@@ -4,6 +4,7 @@ import {
   FETCH_SUCCESS,
   FETCH_FAILURE,
   LOAD_GAME,
+  SET_NUMBERS,
   SET_CELL,
   SET_PREDICTION,
 } from 'actions/gameActions';
@@ -34,6 +35,10 @@ const gameReducer = (state = {}, action) => {
           ],
           []
         ),
+        numbers: {
+          focusedIndex: null,
+          focusedNumber: null,
+        },
       };
 
     case FETCH_FAILURE:
@@ -44,6 +49,15 @@ const gameReducer = (state = {}, action) => {
 
     case LOAD_GAME:
       return action.payload.game;
+
+    case SET_NUMBERS:
+      return {
+        ...state,
+        numbers: {
+          focusedIndex: action.payload.focusedIndex,
+          focusedNumber: action.payload.focusedNumber,
+        },
+      };
 
     case SET_CELL:
       return {

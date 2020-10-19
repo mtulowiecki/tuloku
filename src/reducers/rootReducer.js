@@ -583,6 +583,10 @@ const initialGameState = {
       solved: 1,
     },
   ],
+  numbers: {
+    focusedIndex: null,
+    focusedNumber: null,
+  },
 };
 
 const initialRootState = {
@@ -624,32 +628,11 @@ const initialRootState = {
         date: new Date(1993, 10, 24, 14, 22, 34, 53),
       },
     ],
-    hard: [
-      {
-        time: {
-          secondTenths: 0,
-          seconds: 32,
-          minutes: 8,
-          hours: 0,
-          days: 0,
-        },
-        date: new Date(1338, 1, 30, 14, 58, 32, 13),
-      },
-      {
-        time: {
-          secondTenths: 0,
-          seconds: 38,
-          minutes: 28,
-          hours: 3,
-          days: 0,
-        },
-        date: new Date(1958, 5, 21, 12, 58, 32, 13),
-      },
-    ],
+    hard: [],
   },
   settings: {
     remainingDigits: true,
-    higlightCell: true,
+    highlightCell: true,
   },
 };
 

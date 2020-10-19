@@ -39,10 +39,10 @@ const StyledButton = styled(motion.button)`
 
 const ArrowButton = styled(LeftArrowButton)`
   position: absolute;
-  padding: 0.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  top: calc(50% - 0.625rem);
+  padding: 0.625rem;
+  width: 2rem;
+  height: 2rem;
+  top: 0;
   z-index: 2;
   ${({ mirrored }) =>
     mirrored &&
