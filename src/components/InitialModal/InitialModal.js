@@ -43,10 +43,7 @@ const InitialModal = () => {
 
   return (
     <Modal isVisible={isVisible} onOutsideClick={hideModal}>
-      <Paragraph>
-        For full expirience enter fullscreen mode and add this page to your
-        homepage.
-      </Paragraph>
+      <Paragraph>For full expirience enter fullscreen mode.</Paragraph>
       <ButtonsWrapper>
         <StyledButton name="cancel" secondary onTap={hideModal}>
           Cancel
