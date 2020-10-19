@@ -18,6 +18,7 @@ const Wrapper = styled.div`
   grid-template-rows: 4fr repeat(3, 2rem) 1fr auto;
   grid-gap: 1rem;
   place-items: center;
+  overflow-x: hidden;
 `;
 
 const Home = ({ gameHistory, difficulty }) => {
