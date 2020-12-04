@@ -61,7 +61,7 @@ const Toolbar = ({
 
   useEffect(() => {
     const handleKeyUp = (e) => {
-      const setFocusedIndex = (index) => setCell(index, focusedNumber);
+      const setFocusedIndex = (index) => setNumbers(index);
 
       switch (e.key.toUpperCase()) {
         case 'R':
